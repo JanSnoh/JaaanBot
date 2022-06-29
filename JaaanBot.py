@@ -20,7 +20,7 @@ class JaanBot(commands.Bot):
         
     @commands.hybrid_command(name="pong")
     async def ping_command(self, ctx: commands.Context) -> None:
-        await ctx.send("Yo whassup")
+        await ctx.send("Yo whatzzup")
 
 
     async def on_message(self, message):
