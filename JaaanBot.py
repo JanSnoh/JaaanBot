@@ -23,41 +23,44 @@ class JaanBot(commands.Bot):
         await ctx.send("Yo whatzzup")
 
 
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         msg_text = message.content.lower()
         if(message.author == self.user):
             return
+        if(message.author.id == 324630784491126784):
+            await message.add_reaction("🤡")
         if msg_text == "hello":
             await message.channel.send("fack off \n  <:mortar:989994064910889050>")
             
-        elif(msg_text.startswith("!zauber")):
-            if(msg_text == "!zauber"):
-                answ = "Im Sortiment sind: \n"
-                with open("Zauber.tsv", "r", encoding='UTF-8', newline='') as file:
-                    raw = csv.DictReader(file, delimiter="\t", quotechar="'")
-                    for row in raw:
-                        print(row["Name"])
-                        answ+=f"{row['Name']}\n"
-                await message.channel.send(answ)
-            else:
-                arg = msg_text[8:]
-                answ = ""
-                with open("Zauber.tsv", "r", encoding='UTF-8', newline='') as file:
-                    raw = csv.DictReader(file, delimiter="\t", quotechar="'")
-                    for row in raw:
-                        #print(f"{row['Beschreibung']} und {arg}")
-                        if (row["Name"].lower() == arg):
-                            if ("Timestamp" in row):
-                                del row["Timestamp"]
-                                answ+=f"{pprint.pformat(row, sort_dicts=False, width=80)}\n"
-                                #answer+=
-                    answ = answ.replace("{", "```python\n")
-                    answ = answ.replace("}", "```")
-                    print(answ)
-                await message.channel.send("Error!" if answ=="css \n" else answ)
+#        elif(msg_text.startswith("!zauber")):
+#            if(msg_text == "!zauber"):
+#                answ = "Im Sortiment sind: \n"
+#                with open("Zauber.tsv", "r", encoding='UTF-8', newline='') as file:
+#                    raw = csv.DictReader(file, delimiter="\t", quotechar="'")
+#                    for row in raw:
+#                        print(row["Name"])
+#                        answ+=f"{row['Name']}\n"
+#                await message.channel.send(answ)
+#            else:
+#                arg = msg_text[8:]
+#                answ = ""
+#                with open("Zauber.tsv", "r", encoding='UTF-8', newline='') as file:
+#                    raw = csv.DictReader(file, delimiter="\t", quotechar="'")
+#                    for row in raw:
+#                        #print(f"{row['Beschreibung']} und {arg}")
+#                        if (row["Name"].lower() == arg):
+#                            if ("Timestamp" in row):
+#                                del row["Timestamp"]
+#                                answ+=f"{pprint.pformat(row, sort_dicts=False, width=80)}\n"
+#                                #answer+=
+#                    answ = answ.replace("{", "```python\n")
+#                    answ = answ.replace("}", "```")
+#                    print(answ)
+#                await message.channel.send("Error!" if answ=="css \n" else answ)
             
         
         print(f'Message from {message.author}: {message.content}')
+        await self.process_commands(message )
                      
 
     async def on_raw_reaction_add(self, payload):
