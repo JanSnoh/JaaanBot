@@ -1,4 +1,5 @@
 import math
+from typing import Union
 import discord
 from discord.ext import commands
 import csv
@@ -10,9 +11,35 @@ class DnD(commands.Cog):
         self.bot = bot
 
 
-    @commands.hybrid_command(name="d", description="Wuerfeln ist lustig!")
-    async def dice_command(self, ctx: commands.Context, arg:int=20):
-        await ctx.send(random.randint(1,arg))
+    @discord.app_commands.command(name="d", description="Wuerfeln ist lustig!")
+    @discord.app_commands.choices(dice=[
+        discord.app_commands.Choice(name="4",  value=1),
+        discord.app_commands.Choice(name="6",  value=2),
+        discord.app_commands.Choice(name="8",  value=3),
+        discord.app_commands.Choice(name="10", value=4),
+        discord.app_commands.Choice(name="20", value=5)])
+    async def dice_command(self, ctx: commands.Context, dice: discord.app_commands.Choice[int], ):
+        result =random.randint(1, int(dice.name))
+        if(ctx.bot.DnD_ActiveSkillcheck == None):
+            await ctx.send(result)
+        else:
+            dc = ctx.bot.DnD_ActiveSkillcheck["dc"]
+            await ctx.send(f"{ctx.author} hat den Skillcheck mit einer {result} : {'verkackt' if dc>result else 'geschafft'}")
+
+    #TODO: Add dnd expression calculator   e.g. "2d7+5"
+
+
+    @discord.app_commands.command(name="skillcheck",description="Startet einen Skillcheck")
+    async def skillcheck(self, interaction: discord.Interaction, text: str, dc: int):
+        interaction.client.DnD_ActiveSkillcheck = {"dc": dc, "msg":None}
+        await interaction.response.send_message(f"Skillcheck mit einer dc von {dc} erstellt!", ephemeral=True)
+        interaction.client.DnD_ActiveSkillcheck["msg"]=await interaction.channel.send(f"{interaction.user} hat einen Skillcheck erstellt!")
+
+    @discord.app_commands.command(name="endskillcheck",description="Beendet einen Skillcheck")
+    async def endskillcheck(self, interaction: discord.Interaction ):
+        interaction.client.DnD_ActiveSkillcheck = None
+        await interaction.response.send_message("Skillcheck beendet!")
+
 
     #Zauber Dictionary Commando!
     @commands.hybrid_command(name="zauber")
@@ -48,4 +75,4 @@ class DnD(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(DnD(bot), guilds=[discord.Object(id=977274077905584148)]) 
+    await bot.add_cog(DnD(bot)) 
