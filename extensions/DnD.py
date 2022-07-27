@@ -1,4 +1,5 @@
 import math
+import os
 from typing import Union
 import discord
 from discord.ext import commands
@@ -55,14 +56,14 @@ class DnD(commands.Cog):
             else:
                 answ = ""
                 with open("Zauber.tsv", "r", encoding='UTF-8', newline='') as file:
-                    raw = csv.DictReader(file, delimiter="\t", quotechar="'")
+                    raw = csv.DictReader(file, delimiter="\t", quotechar="'", quoting=csv.QUOTE_NONE)
                     for row in raw:
                         print(f"{row['Name']} und {arg} ist {row['Name'] ==arg}")
                         if (row["Name"].lower() ==  arg.lower()):
                             if ("Timestamp" in row):
                                 del row["Timestamp"]
-                                answ+=f"{pprint.pformat(row, sort_dicts=False, width=80)}\n"
-                                #answer+=
+                            answ+=f"{(row)}\n"
+                            #answer+=
                     answ = answ.replace("{", "```python\n")
                     answ = answ.replace("}", "```")
                     print(answ)
